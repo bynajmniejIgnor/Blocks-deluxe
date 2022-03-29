@@ -177,7 +177,7 @@ void gravity(){
 		}
 	}
 	for(int j=0; j<10; j++){
-		if(board[i-1][j].val!=0){
+		if(board[21][j].val!=0){
 			settle(21,j);
 		}
 	}
