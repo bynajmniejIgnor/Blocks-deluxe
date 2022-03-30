@@ -123,16 +123,10 @@ void updateBoard(SDL_Renderer* renderer){
 	}
 }
 
-void swap(int* a, int* b){
-	int tmp=*a;
-	*a=*b;
-	*b=tmp;
-}
-
-void spawnTetrimino(int tetrimino[4][4], int y, int x){
+void spawnTetromino(int tetromino[4][4], int y, int x){
 	for(int i=0; i<4; i++){
 		for(int j=0; j<4; j++){
-			board[y+i][x+j].val=tetrimino[i][j];
+			board[y+i][x+j].val=tetromino[i][j];
 		}
 	}
 }
@@ -150,10 +144,8 @@ void devMode(){
 
 void settle(int y, int x){
 	if(board[y][x].val==0 || board[y][x].val>=8){
-		//printf("Returning settle cuz y=%d x=%d is 0\n",y,x);
 		return;
 	}
-	//printf("Calling settle for y=%d x=%d\n",y,x);
 	board[y][x].val+=8;
 	settle(y-1,x);
 	settle(y,x+1);
@@ -163,25 +155,27 @@ void settle(int y, int x){
 void gravity(){
 	for(int i=21; i>1; i--){
 		for(int j=0; j<10; j++){
-			//if(board[20][3].val==15) continue;
-			if(board[i-1][j].val>=8){
-				continue;
-			}
-			if(board[i][j].val!=0){
-				//board[i][j].val+=8;
-				settle(i,j);
+			if(board[i-1][j].val>=8 || board[i][j].val!=0){
 				continue;
 			}
 			board[i][j].val=board[i-1][j].val;
 			board[i-1][j].val=0;
 		}
 	}
+	//SETTLE BLOCKS THAT TOUCH SETTLED BLOCKS
+	for(int i=20; i>1; i--){
+		for(int j=0; j<10; j++){
+			if(board[i+1][j].val!=board[i][j].val && board[i+1][j].val!=0){
+				settle(i,j);
+			}
+		}
+	}
+	//SETTLE BLOCK THAT TOUCH THE FLOOR
 	for(int j=0; j<10; j++){
 		if(board[21][j].val!=0){
 			settle(21,j);
 		}
 	}
-	//printf("%d\n",board[20][3].val);
 }
 
 void resetBoard(){
@@ -190,13 +184,13 @@ void resetBoard(){
 			board[i][j].val=0;
 		}
 	}
-	spawnTetrimino(longBoi,2,0);
-	spawnTetrimino(revL,2,5);
-	spawnTetrimino(L,5,1);
-	spawnTetrimino(square,7,8);
-	spawnTetrimino(revZigzag,10,0);
-	spawnTetrimino(T,12,5);
-	spawnTetrimino(zigzag,15,3);
+	spawnTetromino(longBoi,2,0);
+	spawnTetromino(revL,2,5);
+	spawnTetromino(L,5,1);
+	spawnTetromino(square,7,8);
+	spawnTetromino(revZigzag,10,0);
+	spawnTetromino(T,12,5);
+	spawnTetromino(zigzag,15,3);
 }
 
 int main(int argc, char* args[]){
@@ -221,13 +215,13 @@ int main(int argc, char* args[]){
 
 	initBoard(renderer,origin);
 
-	spawnTetrimino(longBoi,2,0);
-	spawnTetrimino(revL,2,5);
-	spawnTetrimino(L,5,1);
-	spawnTetrimino(square,7,8);
-	spawnTetrimino(revZigzag,10,0);
-	spawnTetrimino(T,12,5);
-	spawnTetrimino(zigzag,15,3);
+	spawnTetromino(longBoi,2,0);
+	spawnTetromino(revL,2,5);
+	spawnTetromino(L,5,1);
+	spawnTetromino(square,7,8);
+	spawnTetromino(revZigzag,10,0);
+	spawnTetromino(T,12,5);
+	spawnTetromino(zigzag,15,3);
 
 	while(running){
 		SDL_PollEvent(&event);

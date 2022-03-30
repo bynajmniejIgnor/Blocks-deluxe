@@ -1,6 +1,6 @@
 ﻿  main.c
 C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(65,32): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(66,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(219,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(220,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(213,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(214,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   SDL_Tetris.vcxproj -> C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\x64\Debug\SDL_Tetris.exe
