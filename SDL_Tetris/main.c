@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <SDL.h>
+#include <time.h>
 
 typedef struct cell{
 	SDL_Rect r;
@@ -131,6 +132,66 @@ void spawnTetromino(int tetromino[4][4], int y, int x){
 	}
 }
 
+void spawnRandomTetromino(){
+	for(int i=0; i<21; i++){
+		for(int j=0; j<9; j++){
+			if(board[i][j].val>0 && board[i][j].val<8) return;
+		}
+	}
+	int r=rand()%7;
+	switch(r){
+		case 0:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=longBoi[i][j];
+				}
+			}
+			break;
+		case 1:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=revL[i][j];
+				}
+			}
+			break;
+		case 2:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=L[i][j];
+				}
+			}
+			break;
+		case 3:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=square[i][j];
+				}
+			}
+			break;
+		case 4:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=revZigzag[i][j];
+				}
+			}
+			break;
+		case 5:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=T[i][j];
+				}
+			}
+			break;
+		case 6:
+			for(int i=0; i<4; i++){
+				for(int j=0; j<4; j++){
+					board[1+i][3+j].val=zigzag[i][j];
+				}
+			}
+			break;
+	}
+}
+
 void devMode(){
 	system("cls");
 	for(int i=0; i<22; i++){
@@ -140,7 +201,48 @@ void devMode(){
 		}
 		printf("\n");
 	}
-}	
+}
+
+int touchWallLeft(){
+	for(int i=0; i<21; i++){
+		if(board[i][0].val>0 && board[i][0].val<8) return 1;
+	}
+	return 0;
+}
+int touchWallRight(){
+	for(int i=0; i<21; i++){
+		if(board[i][9].val>0 && board[i][9].val<8) return 1;
+	}
+	return 0;
+}
+
+void moveBlock(char d){
+	switch(d){
+		case 'l':
+			if(touchWallLeft()) break;
+			for(int i=21; i>0; i--){
+				for(int j=1; j<10; j++){
+					if(board[i][j].val<8 && board[i][j].val){
+						board[i][j-1].val=board[i][j].val;
+						board[i][j].val=0;
+					}
+				}
+			}
+			break;
+		case 'r':
+			if(touchWallRight()) break;
+			for(int i=21; i>0; i--){
+				for(int j=8; j>=0; j--){
+					if(board[i][j].val<8 && board[i][j].val){
+						board[i][j+1].val=board[i][j].val;
+						board[i][j].val=0;
+					}
+				}
+			}
+			break;
+	}
+	
+}
 
 void settle(int y, int x){
 	if(board[y][x].val==0 || board[y][x].val>=8){
@@ -148,18 +250,16 @@ void settle(int y, int x){
 	}
 	board[y][x].val+=8;
 	settle(y-1,x);
+	settle(y+1,x);
 	settle(y,x+1);
 	settle(y,x-1);
 }
 
 void gravity(){
-	for(int i=21; i>1; i--){
-		for(int j=0; j<10; j++){
-			if(board[i-1][j].val>=8 || board[i][j].val!=0){
-				continue;
-			}
-			board[i][j].val=board[i-1][j].val;
-			board[i-1][j].val=0;
+	//SETTLE BLOCK THAT TOUCH THE FLOOR
+	for(int j=0; j<10; j++){
+		if(board[21][j].val!=0){
+			settle(21,j);
 		}
 	}
 	//SETTLE BLOCKS THAT TOUCH SETTLED BLOCKS
@@ -170,12 +270,17 @@ void gravity(){
 			}
 		}
 	}
-	//SETTLE BLOCK THAT TOUCH THE FLOOR
-	for(int j=0; j<10; j++){
-		if(board[21][j].val!=0){
-			settle(21,j);
+
+	for(int i=21; i>1; i--){
+		for(int j=0; j<10; j++){
+			if(board[i-1][j].val>=8 || board[i][j].val!=0){
+				continue;
+			}
+			board[i][j].val=board[i-1][j].val;
+			board[i-1][j].val=0;
 		}
 	}
+	spawnRandomTetromino();
 }
 
 void resetBoard(){
@@ -193,7 +298,20 @@ void resetBoard(){
 	spawnTetromino(zigzag,15,3);
 }
 
+unsigned int lastTime=0, currentTime;
+int gravityTick=500;
+
+void timeGravity(){
+	currentTime = SDL_GetTicks();
+	if (currentTime>lastTime+gravityTick) {
+		gravity();
+		lastTime = currentTime;
+	}
+}
+
 int main(int argc, char* args[]){
+
+	srand(time(NULL));
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 	int windowWidth=700;
@@ -215,7 +333,9 @@ int main(int argc, char* args[]){
 
 	initBoard(renderer,origin);
 
-	spawnTetromino(longBoi,2,0);
+	//spawnTetromino(longBoi,2,2);
+	
+	/*
 	spawnTetromino(revL,2,5);
 	spawnTetromino(L,5,1);
 	spawnTetromino(square,7,8);
@@ -223,36 +343,54 @@ int main(int argc, char* args[]){
 	spawnTetromino(T,12,5);
 	spawnTetromino(zigzag,15,3);
 
+	*/
 	while(running){
+
+		//-----------------------------UPDATE---------------------------//
+		//-------------------------------------------------------------//
+		
 		SDL_PollEvent(&event);
+		timeGravity();
 		switch(event.type){
 			case SDL_QUIT:
 				running=0;
 				break;
 			case SDL_KEYDOWN:
 				switch(event.key.keysym.sym){
-					case SDLK_SPACE:
-						gravity();
-						devMode();
-						break;
 					case SDLK_ESCAPE:
 						running=0;
+						break;
+					case SDLK_LEFT:
+						moveBlock('l');
+						break;
+					case SDLK_RIGHT:
+						moveBlock('r');
+						break;
+					case SDLK_DOWN:
+						gravity();
+						break;
+					case SDLK_SPACE:
+						spawnRandomTetromino();
 						break;
 					case SDLK_r:
 						resetBoard();
 						break;
+
 				}
+				devMode();
 				break;
 			default:
 				break;
 		}
+
+		//----------------------------RENDER----------------------------//
+		//-------------------------------------------------------------//
 		SDL_SetRenderDrawColor(renderer,0,0,0,255);
 		SDL_RenderClear(renderer);
 		drawBackground(renderer,background);
 		updateBoard(renderer);
 		SDL_RenderPresent(renderer);
 	}
-
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
