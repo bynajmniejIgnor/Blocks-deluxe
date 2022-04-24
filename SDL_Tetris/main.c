@@ -13,16 +13,73 @@ int longBoi[4][4]={
 	0,0,0,0,
 	0,0,0,0
 };
+
+int longBoiCycle[2][4][4]={
+	1,1,1,1,
+	0,0,0,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	1,0,0,0,
+	1,0,0,0,
+	1,0,0,0,
+	1,0,0,0
+};
+
 int revL[4][4]={
 	2,0,0,0,
-	2,2,2,2,
+	2,2,2,0,
 	0,0,0,0,
 	0,0,0,0
 };
-int L[4][4]={
-	0,0,0,3,
-	3,3,3,3,
+
+int revLCycle[4][4][4]={
+	2,0,0,0,
+	2,2,2,0,
 	0,0,0,0,
+	0,0,0,0,
+
+	2,2,0,0,
+	2,0,0,0,
+	2,0,0,0,
+	0,0,0,0,
+
+	2,2,2,0,
+	0,0,2,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	0,2,0,0,
+	0,2,0,0,
+	2,2,0,0,
+	0,0,0,0
+};
+int L[4][4]={
+	0,0,3,0,
+	3,3,3,0,
+	0,0,0,0,
+	0,0,0,0
+};
+
+int LCycle[4][4][4]={
+	0,0,3,0,
+	3,3,3,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	3,0,0,0,
+	3,0,0,0,
+	3,3,0,0,
+	0,0,0,0,
+
+	3,3,3,0,
+	3,0,0,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	3,3,0,0,
+	0,3,0,0,
+	0,3,0,0,
 	0,0,0,0
 };
 int square[4][4]={
@@ -37,10 +94,43 @@ int revZigzag[4][4]={
 	0,0,0,0,
 	0,0,0,0
 };
+
+int revZigzagCycle[2][4][4]={
+	0,5,5,0,
+	5,5,0,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	5,0,0,0,
+	5,5,0,0,
+	0,5,0,0,
+	0,0,0,0
+};
 int T[4][4]={
 	0,6,0,0,
 	6,6,6,0,
 	0,0,0,0,
+	0,0,0,0
+};
+int TCycle[4][4][4]={
+	0,6,0,0,
+	6,6,6,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	6,0,0,0,
+	6,6,0,0,
+	6,0,0,0,
+	0,0,0,0,
+
+	6,6,6,0,
+	0,6,0,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	0,6,0,0,
+	6,6,0,0,
+	0,6,0,0,
 	0,0,0,0
 };
 int zigzag[4][4]={
@@ -50,6 +140,17 @@ int zigzag[4][4]={
 	0,0,0,0
 };
 
+int zigzagCycle[2][4][4]={
+	7,7,0,0,
+	0,7,7,0,
+	0,0,0,0,
+	0,0,0,0,
+
+	0,7,0,0,
+	7,7,0,0,
+	7,0,0,0,
+	0,0,0,0
+};
 void drawBackground(SDL_Renderer* renderer, SDL_Rect backgr){
 	SDL_SetRenderDrawColor(renderer,255,255,255,150);
 	SDL_RenderFillRect(renderer,&backgr);
@@ -127,18 +228,34 @@ void updateBoard(SDL_Renderer* renderer){
 void spawnTetromino(int tetromino[4][4], int y, int x){
 	for(int i=0; i<4; i++){
 		for(int j=0; j<4; j++){
+			if(board[y+i][x+j].val!=0) continue;
 			board[y+i][x+j].val=tetromino[i][j];
 		}
 	}
 }
 
-void spawnRandomTetromino(){
+int isFalling(){
 	for(int i=0; i<21; i++){
-		for(int j=0; j<9; j++){
-			if(board[i][j].val>0 && board[i][j].val<8) return;
+		for(int j=0; j<10; j++){
+			if(board[i][j].val>0 && board[i][j].val<8) return 1;
 		}
 	}
+	return 0;
+}
+int zigzagcounter=1;
+int Tcounter=1;
+int revZigzagcounter=1;
+int Lcounter=1;
+int revLcounter=1;
+int longBoicounter=1;
+int previous=-1;
+void spawnRandomTetromino(){
+	if(isFalling()) return;
 	int r=rand()%7;
+	while(r==previous){
+		r=rand()%7;
+	}
+	previous=r;
 	switch(r){
 		case 0:
 			for(int i=0; i<4; i++){
@@ -190,6 +307,80 @@ void spawnRandomTetromino(){
 			}
 			break;
 	}
+	longBoicounter=1;
+	revLcounter=1;
+	revZigzagcounter=1;
+	Lcounter=1;
+	Tcounter=1;
+	zigzagcounter=1;
+}
+
+void clear(int y, int x, int color){
+	if(board[y][x].val!=color) return;
+	board[y][x].val=0;
+	clear(y-1,x,color);
+	clear(y+1,x,color);
+	clear(y,x-1,color);
+	clear(y,x+1,color);
+}
+
+void rotate(){
+	if(!isFalling()) return;
+
+	int x, y, found=0;
+	int color;
+	for(int i=0; i<21; i++){
+		for(int j=0; j<10; j++){
+			if(board[i][j].val<8 && board[i][j].val){
+				color=board[i][j].val;
+				y=i;
+				x=j;
+				found=1;
+				break;
+			}
+		}
+		if(found) break;
+	}
+	if(color==4) return;
+
+	for(int i=0; i<4; i++){
+		for(int j=0; j<4; j++){
+			if(board[y+i][x+j].val!=0 && board[y+i][x+j].val!=color) return;
+		}
+	}
+	clear(y,x,color);
+	switch(color){
+		case 1:
+			spawnTetromino(longBoiCycle[longBoicounter],y,x);
+			if(longBoicounter) longBoicounter=0;
+			else longBoicounter=1;
+			break;
+		case 2:
+			spawnTetromino(revLCycle[revLcounter],y,x);
+			revLcounter++;
+			if(revLcounter==4) revLcounter=0;
+			break;
+		case 3:
+			spawnTetromino(LCycle[Lcounter],y,x);
+			Lcounter++;
+			if(Lcounter==4) Lcounter=0;
+			break;
+		case 5:
+			spawnTetromino(revZigzagCycle[revZigzagcounter],y,x);
+			if(revZigzagcounter) revZigzagcounter=0;
+			else revZigzagcounter=1;
+			break;
+		case 6:
+			spawnTetromino(TCycle[Tcounter],y,x);
+			Tcounter++;
+			if(Tcounter==4) Tcounter=0;
+			break;
+		case 7:
+			spawnTetromino(zigzagCycle[zigzagcounter],y,x);
+			if(zigzagcounter) zigzagcounter=0;
+			else zigzagcounter=1;
+			break;
+	}
 }
 
 void devMode(){
@@ -220,9 +411,15 @@ void moveBlock(char d){
 	switch(d){
 		case 'l':
 			if(touchWallLeft()) break;
-			for(int i=21; i>0; i--){
-				for(int j=1; j<10; j++){
-					if(board[i][j].val<8 && board[i][j].val){
+			for(int j=1; j<10; j++){
+				for(int i=0; i<21; i++){
+					if(board[i][j].val && board[i][j].val<8){
+						if(board[i][j-1].val>8) return;
+						int index=i+1;
+						while(board[index][j].val==board[i][j].val){
+							if(board[index][j-1].val>8) return;
+							index++;
+						}
 						board[i][j-1].val=board[i][j].val;
 						board[i][j].val=0;
 					}
@@ -231,9 +428,15 @@ void moveBlock(char d){
 			break;
 		case 'r':
 			if(touchWallRight()) break;
-			for(int i=21; i>0; i--){
-				for(int j=8; j>=0; j--){
-					if(board[i][j].val<8 && board[i][j].val){
+			for(int j=8; j>=0; j--){
+				for(int i=0; i<21; i++){
+					if(board[i][j].val && board[i][j].val<8){
+						if(board[i][j+1].val>8) return;
+						int index=i+1;
+						while(board[index][j].val==board[i][j].val){
+							if(board[index][j+1].val>8) return;
+							index++;
+						}
 						board[i][j+1].val=board[i][j].val;
 						board[i][j].val=0;
 					}
@@ -241,8 +444,9 @@ void moveBlock(char d){
 			}
 			break;
 	}
-	
 }
+
+
 
 void settle(int y, int x){
 	if(board[y][x].val==0 || board[y][x].val>=8){
@@ -255,13 +459,37 @@ void settle(int y, int x){
 	settle(y,x-1);
 }
 
+void clearBlock(){
+	int cleared=0;
+	for(int i=21; i>0; i--){
+		int toClear=1;
+		for(int j=0; j<10; j++){
+			if(board[i][j].val<8) {
+				toClear=0;
+				break;
+			}
+		}
+		if(toClear){
+			for(int a=i; a>0; a--){
+				for(int j=0; j<10; j++){
+					board[a][j].val=board[a-1][j].val;
+					board[a-1][j].val=0;
+				}
+			}
+		}
+	}
+}
+
 void gravity(){
-	//SETTLE BLOCK THAT TOUCH THE FLOOR
+
+	clearBlock();
+	//SETTLE BLOCKS THAT TOUCH THE FLOOR
 	for(int j=0; j<10; j++){
 		if(board[21][j].val!=0){
 			settle(21,j);
 		}
 	}
+
 	//SETTLE BLOCKS THAT TOUCH SETTLED BLOCKS
 	for(int i=20; i>1; i--){
 		for(int j=0; j<10; j++){
@@ -281,6 +509,7 @@ void gravity(){
 		}
 	}
 	spawnRandomTetromino();
+	devMode();
 }
 
 void resetBoard(){
@@ -332,18 +561,6 @@ int main(int argc, char* args[]){
 	background.y=origin[1];
 
 	initBoard(renderer,origin);
-
-	//spawnTetromino(longBoi,2,2);
-	
-	/*
-	spawnTetromino(revL,2,5);
-	spawnTetromino(L,5,1);
-	spawnTetromino(square,7,8);
-	spawnTetromino(revZigzag,10,0);
-	spawnTetromino(T,12,5);
-	spawnTetromino(zigzag,15,3);
-
-	*/
 	while(running){
 
 		//-----------------------------UPDATE---------------------------//
@@ -366,18 +583,20 @@ int main(int argc, char* args[]){
 					case SDLK_RIGHT:
 						moveBlock('r');
 						break;
+					case SDLK_UP:
+						rotate();
+						break;
 					case SDLK_DOWN:
 						gravity();
 						break;
 					case SDLK_SPACE:
-						spawnRandomTetromino();
+						gravityTick/=2;
 						break;
 					case SDLK_r:
 						resetBoard();
 						break;
 
 				}
-				devMode();
 				break;
 			default:
 				break;
