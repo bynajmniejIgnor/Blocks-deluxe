@@ -1,8 +1,9 @@
 ﻿  main.c
 C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(167,32): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(168,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(264,12): warning C4013: 'rand' undefined; assuming extern returning int
-C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(553,7): warning C4013: 'srand' undefined; assuming extern returning int
-C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(570,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(571,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(270,12): warning C4013: 'rand' undefined; assuming extern returning int
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(501,16): warning C4244: '/=': conversion from 'double' to 'int', possible loss of data
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(565,7): warning C4013: 'srand' undefined; assuming extern returning int
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(581,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\SDL_Tetris\main.c(582,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   SDL_Tetris.vcxproj -> C:\Users\igors\Desktop\storage\C_C++ game\SDL_Tetris\x64\Debug\SDL_Tetris.exe

@@ -233,6 +233,14 @@ void spawnTetromino(int tetromino[4][4], int y, int x){
 		}
 	}
 }
+int running=1;
+int score=0;
+void endGame(SDL_Renderer* renderer, SDL_Window* window){
+	running=0;
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+}
 
 int isFalling(){
 	for(int i=0; i<21; i++){
@@ -255,9 +263,7 @@ void spawnRandomTetromino(SDL_Renderer* renderer, SDL_Window* window){
 	for(int i=0; i<4; i++){
 		for(int j=0; j<4; j++){
 			if(board[1+i][3+j].val!=0){
-				SDL_DestroyRenderer(renderer);
-				SDL_DestroyWindow(window);
-				SDL_Quit();
+				endGame(renderer,window);
 			}
 		}
 	}
@@ -393,15 +399,11 @@ void rotate(){
 	}
 }
 
-void devMode(){
+
+void printScore(){
+	
 	system("cls");
-	for(int i=0; i<22; i++){
-		printf("%d\t",i);
-		for(int j=0; j<10; j++){
-			printf(" %d ",board[i][j].val);
-		}
-		printf("\n");
-	}
+	printf("Score: %d",score);
 }
 
 int touchWallLeft(){
@@ -469,6 +471,10 @@ void settle(int y, int x){
 	settle(y,x-1);
 }
 
+
+int gravityTick=500;
+int ticker=0;
+
 void clearBlock(){
 	int cleared=0;
 	for(int i=21; i>0; i--){
@@ -480,15 +486,23 @@ void clearBlock(){
 			}
 		}
 		if(toClear){
+			ticker++;
 			for(int a=i; a>0; a--){
 				for(int j=0; j<10; j++){
 					board[a][j].val=board[a-1][j].val;
 					board[a-1][j].val=0;
 				}
 			}
+			score+=100;
 		}
 	}
+	printScore();
+	if(ticker==5){
+		gravityTick/=1.2;
+		ticker=0;
+	}
 }
+
 
 void gravity(SDL_Renderer* renderer, SDL_Window* window){
 
@@ -519,7 +533,6 @@ void gravity(SDL_Renderer* renderer, SDL_Window* window){
 		}
 	}
 	spawnRandomTetromino(renderer,window);
-	devMode();
 }
 
 void resetBoard(){
@@ -538,7 +551,6 @@ void resetBoard(){
 }
 
 unsigned int lastTime=0, currentTime;
-int gravityTick=500;
 
 void timeGravity(SDL_Renderer* renderer, SDL_Window* window){
 	currentTime = SDL_GetTicks();
@@ -560,7 +572,6 @@ int main(int argc, char* args[]){
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	SDL_Event event;
-	int running=1;
 
 	SDL_Rect background;
 	int backgroundWidth=440, backgroundHeight=860;
@@ -620,8 +631,9 @@ int main(int argc, char* args[]){
 		updateBoard(renderer);
 		SDL_RenderPresent(renderer);
 	}
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
+	endGame(renderer,window);
+	system("cls");
+	printf("\nYou lost\n Score:%d",score);
+	getchar();
 	return 0;
 }
