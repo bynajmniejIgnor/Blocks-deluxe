@@ -249,8 +249,18 @@ int Lcounter=1;
 int revLcounter=1;
 int longBoicounter=1;
 int previous=-1;
-void spawnRandomTetromino(){
+void spawnRandomTetromino(SDL_Renderer* renderer, SDL_Window* window){
 	if(isFalling()) return;
+
+	for(int i=0; i<4; i++){
+		for(int j=0; j<4; j++){
+			if(board[1+i][3+j].val!=0){
+				SDL_DestroyRenderer(renderer);
+				SDL_DestroyWindow(window);
+				SDL_Quit();
+			}
+		}
+	}
 	int r=rand()%7;
 	while(r==previous){
 		r=rand()%7;
@@ -480,7 +490,7 @@ void clearBlock(){
 	}
 }
 
-void gravity(){
+void gravity(SDL_Renderer* renderer, SDL_Window* window){
 
 	clearBlock();
 	//SETTLE BLOCKS THAT TOUCH THE FLOOR
@@ -508,7 +518,7 @@ void gravity(){
 			board[i-1][j].val=0;
 		}
 	}
-	spawnRandomTetromino();
+	spawnRandomTetromino(renderer,window);
 	devMode();
 }
 
@@ -530,10 +540,10 @@ void resetBoard(){
 unsigned int lastTime=0, currentTime;
 int gravityTick=500;
 
-void timeGravity(){
+void timeGravity(SDL_Renderer* renderer, SDL_Window* window){
 	currentTime = SDL_GetTicks();
 	if (currentTime>lastTime+gravityTick) {
-		gravity();
+		gravity(renderer, window);
 		lastTime = currentTime;
 	}
 }
@@ -567,7 +577,7 @@ int main(int argc, char* args[]){
 		//-------------------------------------------------------------//
 		
 		SDL_PollEvent(&event);
-		timeGravity();
+		timeGravity(renderer, window);
 		switch(event.type){
 			case SDL_QUIT:
 				running=0;
@@ -587,7 +597,7 @@ int main(int argc, char* args[]){
 						rotate();
 						break;
 					case SDLK_DOWN:
-						gravity();
+						gravity(renderer, window);
 						break;
 					case SDLK_SPACE:
 						gravityTick/=2;
