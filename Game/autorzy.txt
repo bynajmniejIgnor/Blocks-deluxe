@@ -1,0 +1,7 @@
+Projekt zaliczeniowy z programowania niskopoziomowego
+
+Adam Piaseczny 151757
+Igor Szczepaniak 151918
+
+Kod jest również dostępny pod linkiem:
+https://github.com/bynajmniejIgnor/Blocks-deluxe
