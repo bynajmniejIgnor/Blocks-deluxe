@@ -1,3 +1,7 @@
+#include "blocks.h"
+#include "render.h"
+#include "board.h"
+
 #ifdef _WIN32
 #include <SDL.h>
 #else
@@ -7,9 +11,6 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "blocks.h"
-#include "render.h"
-
 #define	windowWidth 700
 #define windowHeight 900
 #define backgroundWidth 440
@@ -17,19 +18,6 @@
 
 #define ROWS 22
 #define COLS 10
-
-void draw_background(SDL_Renderer* renderer, SDL_Rect backgr);
-int end_game(SDL_Renderer* renderer, SDL_Window* window);
-
-struct cell {	SDL_Rect r;	int val; };
-void clear(int y, int x, int color, struct cell board[ROWS][COLS]);
-void init_board(float origin[], struct cell board[ROWS][COLS]);
-void settle(int y, int x, struct cell board[ROWS][COLS]);
-int is_falling(struct cell board[ROWS][COLS]);
-int touch_wall_left(struct cell board[ROWS][COLS]);
-int touch_wall_right(struct cell board[ROWS][COLS]);
-void move_block(char d,struct cell board[ROWS][COLS]);
-void spawn_tetronimo(int tetromino[4][4], int y, int x, struct cell board[ROWS][COLS]);
 
 typedef struct cycles {
 	int I;
