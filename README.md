@@ -1,4 +1,3 @@
-# Competitive-blocks...
-Project for low level programming
+# Blocks deluxe
 
-I have no idea what I am doing Adam pls help...
+Gra podobna do tetrisa, gdzie celem gry jest ciągłe uzupełnianie rzędów spadającymi klockami. Jest ona napisana w **C** i działa na **Windows** jak i na **Linux** (Fedora 35). Gra używa `SDL2` jako silnika graficznego.
