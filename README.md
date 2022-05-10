@@ -66,3 +66,8 @@ touch_wall_right function    int touch_wall_right(struct cell board[ROWS][COLS])
 
 Dodatkowo pliki `blocks.h` oraz `blocks.c` zawierają wszystkie możliwe ułożenia klocków (stałe)
 ```
+
+### Kompilacja
+
+Kompilacja łatwiej przebiega na linuksie:
+- polecenie `make` w folderze `Game` spowoduje utworzenie wykonywalnego pliku `BlocksDeluxe`
