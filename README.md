@@ -14,7 +14,9 @@ Gra podobna do tetrisa, gdzie celem gry jest ciągłe uzupełnianie rzędów spa
 
 - `ESC`
 
-  - Wychodzenie z programu
+  - Wychodzenie z programu i zakończenie gry
+
+	- Jeśli użytkownik posiada niezerowy wynik, aplikacja zapisuje ten wynik z datą do pliku `Scores.txt`
 
 - `Lewa strzałka`
 

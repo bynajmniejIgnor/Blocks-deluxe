@@ -45,8 +45,25 @@ int running=1;
 int previous=-1;
 int gravity_tick=500;
 int ticker=0;
+int score=0;
 
 unsigned int lastTime=0, currentTime;
+
+void write_to_file() {
+	char name[256];
+	FILE* file = fopen("Scores.txt", "a");
+	time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+
+	printf("What is your name?:\n");
+ 	fgets(name, sizeof(name), stdin);
+
+	fprintf(file,"Name: %s",name);
+  fprintf(file,"Date: %d-%02d-%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	fprintf(file,"Score: %d\n\n",score);
+	printf("Your score has been written to a file!\n");
+	return;
+}
 
 void update_board(SDL_Renderer* renderer){
 	for(int y=2; y<ROWS; y++){
@@ -193,6 +210,7 @@ void clear_block(){
 		}
 		if(toClear){
 			ticker++;
+			score+=100;
 			for(int a=i; a>0; a--){
 				for(int j=0; j<COLS; j++){
 					board[a][j].val=board[a-1][j].val;
@@ -305,5 +323,7 @@ int main(int argc, char* args[]){
 	}
 	end_game(renderer,window);
 	printf("You lost!\n");
+	printf("Score %d\n",score);
+	if (score) write_to_file();
 	return 0;
 }
